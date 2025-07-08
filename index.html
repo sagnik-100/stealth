@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Price Finder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 800px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 16px 24px;
+            border: 2px solid #e1e5e9;
+            border-radius: 16px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .location-input {
+            width: 150px;
+            padding: 16px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 16px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .location-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-btn {
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .search-btn:active {
+            transform: translateY(0);
+        }
+
+        .search-btn.loading {
+            opacity: 0.8;
+            cursor: not-allowed;
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff40;
+            border-top: 2px solid #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results-container {
+            max-height: 600px;
+            overflow-y: auto;
+            margin-top: 30px;
+        }
+
+        .result-item {
+            background: white;
+            border: 1px solid #e1e5e9;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+            animation: slideIn 0.5s ease-out;
+            display: flex;
+            gap: 16px;
+        }
+
+        .result-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .result-image {
+            flex-shrink: 0;
+        }
+
+        .result-thumbnail {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: #f7fafc;
+        }
+
+        .result-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .result-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+            line-height: 1.3;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .result-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .currency-symbol {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .price-amount {
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .result-rating {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .stars {
+            color: #fbbf24;
+            font-size: 1.2rem;
+        }
+
+        .rating-text {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .result-source {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .source-icon {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        .source-text {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .result-delivery {
+            background: #10b981;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        .result-condition {
+            background: #f59e0b;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-bottom: 8px;
+            margin-left: 8px;
+        }
+
+        .result-link {
+            display: inline-block;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            align-self: flex-start;
+        }
+
+        .result-link:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .no-results-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 16px;
+            border-radius: 12px;
+            margin-top: 20px;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .suggestion-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .suggestion-tag {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .suggestion-tag:hover {
+            background: rgba(102, 126, 234, 0.2);
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+
+            .title {
+                font-size: 2rem;
+            }
+
+            .search-form {
+                flex-direction: column;
+            }
+
+            .location-input {
+                width: 100%;
+            }
+
+            .suggestion-tags {
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🛒</div>
+            <h1 class="title">Smart Price Finder</h1>
+            <p class="subtitle">Compare prices across the web and find the best deals</p>
+        </div>
+
+        <div class="search-container">
+            <form class="search-form" id="searchForm">
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    id="queryInput"
+                    placeholder="What are you looking for? (e.g., iPhone 15, Nike Air Max, MacBook Pro)"
+                    required
+                >
+                <input 
+                    type="text" 
+                    class="location-input" 
+                    id="locationInput"
+                    placeholder="Location"
+                    value="Finland"
+                >
+                <button type="submit" class="search-btn" id="searchBtn">
+                    <div class="loading-spinner" id="loadingSpinner"></div>
+                    <span id="searchBtnText">Search</span>
+                </button>
+            </form>
+
+            <div class="suggestion-tags">
+                <span class="suggestion-tag" onclick="setQuery('iPhone 15')">📱 iPhone 15</span>
+                <span class="suggestion-tag" onclick="setQuery('Nike Air Max')">👟 Nike Air Max</span>
+                <span class="suggestion-tag" onclick="setQuery('MacBook Pro')">💻 MacBook Pro</span>
+                <span class="suggestion-tag" onclick="setQuery('Sony headphones')">🎧 Sony Headphones</span>
+                <span class="suggestion-tag" onclick="setQuery('Samsung TV')">📺 Samsung TV</span>
+                <span class="suggestion-tag" onclick="setQuery('Coffee maker')">☕ Coffee Maker</span>
+            </div>
+        </div>
+
+        <div class="results-container" id="resultsContainer"></div>
+    </div>
+
+    <script>
+        const searchForm = document.getElementById('searchForm');
+        const queryInput = document.getElementById('queryInput');
+        const locationInput = document.getElementById('locationInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const searchBtnText = document.getElementById('searchBtnText');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const resultsContainer = document.getElementById('resultsContainer');
+
+        function setQuery(query) {
+            queryInput.value = query;
+            queryInput.focus();
+        }
+
+        function showLoading() {
+            searchBtn.classList.add('loading');
+            loadingSpinner.style.display = 'inline-block';
+            searchBtnText.textContent = 'Searching...';
+            searchBtn.disabled = true;
+        }
+
+        function hideLoading() {
+            searchBtn.classList.remove('loading');
+            loadingSpinner.style.display = 'none';
+            searchBtnText.textContent = 'Search';
+            searchBtn.disabled = false;
+        }
+
+        function formatReviews(reviews) {
+            if (!reviews) return '';
+            if (reviews >= 1000) {
+                return `${(reviews / 1000).toFixed(1)}k reviews`;
+            }
+            return `${reviews} reviews`;
+        }
+
+        function generateStars(rating) {
+            if (!rating) return '';
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 !== 0;
+            let stars = '';
+            
+            for (let i = 0; i < fullStars; i++) {
+                stars += '⭐';
+            }
+            if (hasHalfStar) {
+                stars += '⭐';
+            }
+            
+            return stars;
+        }
+
+        function formatPrice(item) {
+            // If we have the original price string, use it directly
+            if (item.price_string) {
+                return item.price_string;
+            }
+            
+            // If we have both currency and price, combine them
+            if (item.currency && item.price !== null && item.price !== undefined) {
+                return `${item.currency}${item.price.toFixed(2)}`;
+            }
+            
+            // If we only have price, use it with a default currency indicator
+            if (item.price !== null && item.price !== undefined) {
+                return `${item.price.toFixed(2)}`;
+            }
+            
+            // Fallback
+            return 'Price not available';
+        }
+
+        function displayResults(results) {
+            if (!results || results.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="no-results">
+                        <div class="no-results-icon">🔍</div>
+                        <h3>No results found</h3>
+                        <p>Try adjusting your search terms, check spelling, or try a different location</p>
+                    </div>
+                `;
+                return;
+            }
+
+            resultsContainer.innerHTML = results.map((item, index) => `
+                <div class="result-item" style="animation-delay: ${index * 0.1}s">
+                    ${item.thumbnail ? `
+                        <div class="result-image">
+                            <img src="${item.thumbnail}" alt="${item.title || 'Product'}" class="result-thumbnail">
+                        </div>
+                    ` : ''}
+                    <div class="result-content">
+                        ${item.title ? `<div class="result-title">${item.title}</div>` : ''}
+                        <div class="result-price">${formatPrice(item)}</div>
+                        
+                        ${item.rating ? `
+                            <div class="result-rating">
+                                <span class="stars">${generateStars(item.rating)}</span>
+                                <span class="rating-text">${item.rating}/5${item.reviews ? ` (${formatReviews(item.reviews)})` : ''}</span>
+                            </div>
+                        ` : ''}
+                        
+                        ${item.source ? `
+                            <div class="result-source">
+                                ${item.source_icon ? `<img src="${item.source_icon}" alt="Store" class="source-icon">` : ''}
+                                <span class="source-text">${item.source}</span>
+                            </div>
+                        ` : ''}
+                        
+                        <div>
+                            ${item.delivery && item.delivery.toLowerCase().includes('free') ? `
+                                <span class="result-delivery">${item.delivery}</span>
+                            ` : ''}
+                            ${item.second_hand_condition ? `
+                                <span class="result-condition">${item.second_hand_condition}</span>
+                            ` : ''}
+                        </div>
+                        
+                        ${item.product_link ? `
+                            <a href="${item.product_link}" target="_blank" class="result-link">
+                                View Product →
+                            </a>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function displayError(message) {
+            resultsContainer.innerHTML = `
+                <div class="error-message">
+                    <strong>Error:</strong> ${message}
+                </div>
+            `;
+        }
+
+        searchForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const query = queryInput.value.trim();
+            const location = locationInput.value.trim();
+            
+            if (!query) {
+                displayError('Please enter a product name or description');
+                return;
+            }
+
+            showLoading();
+            resultsContainer.innerHTML = '';
+
+            try {
+                const response = await fetch(`/search?q=${encodeURIComponent(query)}&location=${encodeURIComponent(location)}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const results = await response.json();
+                displayResults(results);
+                
+            } catch (error) {
+                console.error('Search error:', error);
+                displayError('Failed to fetch search results. Please try again.');
+            } finally {
+                hideLoading();
+            }
+        });
+
+        // Auto-focus on search input
+        queryInput.focus();
+
+        // Add enter key support for suggestion tags
+        document.querySelectorAll('.suggestion-tag').forEach(tag => {
+            tag.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.target.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,2 +1,8 @@
 personal_acc_key
 personal_acc_key.pub
+/logs
+*.pem
+test.py
+/.venv
+.env
+
