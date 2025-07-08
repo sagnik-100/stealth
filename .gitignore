@@ -5,4 +5,6 @@ personal_acc_key.pub
 test.py
 /.venv
 .env
+.lock
+
 
