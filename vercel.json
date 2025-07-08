@@ -1,10 +1,9 @@
 {
-  "builds": [
-    {
-      "src": "main.py",
-      "use": "@vercel/python"
+  "functions": {
+    "main.py": {
+      "runtime": "python3.13"
     }
-  ],
+  },
   "routes": [
     {
       "src": "/(.*)",
