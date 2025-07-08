@@ -10,7 +10,7 @@ import re
 load_dotenv()
 
 
-logging.basicConfig(filename=f'logs/food_test_{datetime.now().strftime("%Y-%m-%d")}.log',level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
@@ -85,7 +85,7 @@ def search(q: str, location: str = ""):
         
         logger.info("Sorted results:")
         logger.info(sorted_results)
-        return sorted_results[:10]
+        return sorted_results[:20]
         
     except Exception as e:
         logger.error(f"An error occurred: {e}")

@@ -1,10 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import APIRouter, HTTPException, BackgroundTasks
-from pydantic import BaseModel
-from typing import Optional, List, Dict, Any
 import logging
-import os
 from datetime import datetime
 from starlette.responses import HTMLResponse
 
@@ -41,6 +37,10 @@ async def read_root():
         return HTMLResponse(content=html_content, status_code=200)
     except FileNotFoundError:
         return HTMLResponse(content="<h1>Welcome to Smart Price Finder</h1>", status_code=200)
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}
     
 
 # if __name__ == "__main__":
