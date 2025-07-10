@@ -5,6 +5,7 @@ from datetime import datetime
 from starlette.responses import HTMLResponse
 
 from api.search_router import router as search_router
+from api.search_with_gemini import router as gemini_router
 
 # Configure logging for Vercel (simplified)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -27,7 +28,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(search_router)
+app.include_router(search_router, prefix="/api")
+app.include_router(gemini_router, prefix="/api")
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root():

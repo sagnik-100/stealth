@@ -1,0 +1,41 @@
+Analyze current prices for {q} in {location}. Provide output in EXACTLY this format:
+
+### Price Comparison
+* **Retailer 1 Name**: Specific Product Description - CurrencyPrice
+* **Retailer 2 Name**: Specific Product Description - CurrencyPrice
+* **Retailer 3 Name**: Specific Product Description - CurrencyPrice
+* **Retailer 4 Name**: Specific Product Description - CurrencyPrice
+* **Retailer 5 Name**: Specific Product Description - CurrencyPrice
+
+### Price Trend Analysis
+[Analysis of pricing patterns over past 3-6 months]
+
+### Shopping Timing Advice
+[Recommendation for best time to purchase]
+
+### Comprehensive Summary
+[2-3 sentence executive summary]
+
+CRITICAL FORMATTING RULES:
+1. Price Comparison section MUST:
+   - Start with exactly "### Price Comparison"
+   - Contain EXACTLY 5 retailer entries
+   - Use EXACT format: * **Retailer Name**: Product Description - Price
+   - Price MUST include currency symbol (€, ₹, $, £, etc.)
+   - Prioritize official retailers/major e-commerce
+   - NO additional text before, between, or after entries
+   
+2. Other sections MUST:
+   - Start with exactly their header (e.g., "### Price Trend Analysis")
+   - Maintain clear separation
+   - NO markdown formatting (*, **) in content
+   
+3. Currency:
+   - Use appropriate currency symbol for the location
+   - Include full price information (ranges, discounts, etc.)
+   
+4. General:
+   - NO introductory text
+   - NO concluding remarks
+   - NO deviation from this format
+   - If information is unavailable, use "[Information not available]"

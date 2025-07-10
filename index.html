@@ -28,7 +28,7 @@
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
             padding: 40px;
             width: 100%;
-            max-width: 800px;
+            max-width: 900px;
             animation: fadeInUp 0.8s ease-out;
         }
 
@@ -124,6 +124,11 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
+        .search-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
         .search-btn {
             padding: 16px 32px;
             background: linear-gradient(135deg, #667eea, #764ba2);
@@ -136,6 +141,9 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .search-btn:hover {
@@ -152,6 +160,14 @@
             cursor: not-allowed;
         }
 
+        .gemini-btn {
+            background: linear-gradient(135deg, #4285f4, #34a853);
+        }
+
+        .gemini-btn:hover {
+            box-shadow: 0 10px 30px rgba(66, 133, 244, 0.3);
+        }
+
         .loading-spinner {
             display: none;
             width: 20px;
@@ -160,7 +176,6 @@
             border-top: 2px solid #ffffff;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin-right: 8px;
         }
 
         @keyframes spin {
@@ -201,6 +216,128 @@
                 opacity: 1;
                 transform: translateX(0);
             }
+        }
+
+        .gemini-results {
+            background: white;
+            border: 2px solid #4285f4;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .gemini-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 25px;
+            color: #4285f4;
+        }
+
+        .gemini-header h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .price-comparison {
+            margin-bottom: 30px;
+        }
+
+        .price-comparison h4 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .price-item {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .price-item:hover {
+            background: #e3f2fd;
+            border-color: #4285f4;
+        }
+
+        .price-item-content {
+            flex: 1;
+        }
+
+        .price-retailer {
+            font-weight: 600;
+            color: #4285f4;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .price-product {
+            color: #333;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .price-value {
+            font-weight: 700;
+            color: #2d3748;
+            font-size: 1.2rem;
+        }
+
+        .price-item-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .price-link {
+            display: inline-block;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #4285f4, #34a853);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .price-link:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(66, 133, 244, 0.3);
+        }
+
+        .analysis-section {
+            margin-bottom: 25px;
+        }
+
+        .analysis-section h4 {
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .analysis-content {
+            background: #f8f9fa;
+            border-left: 4px solid #4285f4;
+            padding: 16px;
+            border-radius: 8px;
+            line-height: 1.6;
+            color: #555;
         }
 
         .result-image {
@@ -396,12 +533,26 @@
                 flex-direction: column;
             }
 
+            .search-buttons {
+                flex-direction: column;
+            }
+
             .location-input {
                 width: 100%;
             }
 
             .suggestion-tags {
                 justify-content: flex-start;
+            }
+
+            .price-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .price-item-actions {
+                align-items: flex-start;
+                width: 100%;
             }
         }
     </style>
@@ -430,10 +581,16 @@
                     placeholder="Location"
                     value="Finland"
                 >
-                <button type="submit" class="search-btn" id="searchBtn">
-                    <div class="loading-spinner" id="loadingSpinner"></div>
-                    <span id="searchBtnText">Search</span>
-                </button>
+                <div class="search-buttons">
+                    <button type="submit" class="search-btn" id="searchBtn">
+                        <div class="loading-spinner" id="loadingSpinner"></div>
+                        <span id="searchBtnText">🔍 Search</span>
+                    </button>
+                    <button type="button" class="search-btn gemini-btn" id="geminiSearchBtn">
+                        <div class="loading-spinner" id="geminiLoadingSpinner"></div>
+                        <span id="geminiSearchBtnText">✨ Gemini Analysis</span>
+                    </button>
+                </div>
             </form>
 
             <div class="suggestion-tags">
@@ -448,35 +605,59 @@
 
         <div class="results-container" id="resultsContainer"></div>
     </div>
-
+    
     <script>
+    // Wait until DOM is fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get all elements
         const searchForm = document.getElementById('searchForm');
         const queryInput = document.getElementById('queryInput');
         const locationInput = document.getElementById('locationInput');
         const searchBtn = document.getElementById('searchBtn');
         const searchBtnText = document.getElementById('searchBtnText');
         const loadingSpinner = document.getElementById('loadingSpinner');
+        const geminiSearchBtn = document.getElementById('geminiSearchBtn');
+        const geminiSearchBtnText = document.getElementById('geminiSearchBtnText');
+        const geminiLoadingSpinner = document.getElementById('geminiLoadingSpinner');
         const resultsContainer = document.getElementById('resultsContainer');
-
-        function setQuery(query) {
+        
+        // Set default location
+        if(!locationInput.value) locationInput.value = "Finland";
+        
+        // Make setQuery function globally available
+        window.setQuery = function(query) {
             queryInput.value = query;
             queryInput.focus();
+        };
+        
+        function showLoading(isGemini = false) {
+            if (isGemini) {
+                geminiSearchBtn.classList.add('loading');
+                geminiLoadingSpinner.style.display = 'inline-block';
+                geminiSearchBtnText.textContent = 'Analyzing...';
+                geminiSearchBtn.disabled = true;
+            } else {
+                searchBtn.classList.add('loading');
+                loadingSpinner.style.display = 'inline-block';
+                searchBtnText.textContent = 'Searching...';
+                searchBtn.disabled = true;
+            }
         }
-
-        function showLoading() {
-            searchBtn.classList.add('loading');
-            loadingSpinner.style.display = 'inline-block';
-            searchBtnText.textContent = 'Searching...';
-            searchBtn.disabled = true;
+        
+        function hideLoading(isGemini = false) {
+            if (isGemini) {
+                geminiSearchBtn.classList.remove('loading');
+                geminiLoadingSpinner.style.display = 'none';
+                geminiSearchBtnText.textContent = '✨ Gemini Analysis';
+                geminiSearchBtn.disabled = false;
+            } else {
+                searchBtn.classList.remove('loading');
+                loadingSpinner.style.display = 'none';
+                searchBtnText.textContent = '🔍 Search';
+                searchBtn.disabled = false;
+            }
         }
-
-        function hideLoading() {
-            searchBtn.classList.remove('loading');
-            loadingSpinner.style.display = 'none';
-            searchBtnText.textContent = 'Search';
-            searchBtn.disabled = false;
-        }
-
+        
         function formatReviews(reviews) {
             if (!reviews) return '';
             if (reviews >= 1000) {
@@ -521,6 +702,93 @@
             return 'Price not available';
         }
 
+        function displayGeminiResults(data) {
+            if (!data || data.error) {
+                resultsContainer.innerHTML = `
+                    <div class="error-message">
+                        <strong>Error:</strong> ${data?.error || 'Failed to get Gemini analysis'}
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `
+                <div class="gemini-results">
+                    <div class="gemini-header">
+                        <span style="font-size: 1.5rem;">✨</span>
+                        <h3>Gemini AI Analysis</h3>
+                    </div>
+            `;
+
+            // Price Comparison Section
+            if (data.price_comparison && data.price_comparison.length > 0) {
+                html += `
+                    <div class="price-comparison">
+                        <h4>💰 Price Comparison</h4>
+                `;
+                
+                data.price_comparison.forEach(item => {
+                    html += `
+                        <div class="price-item">
+                            <div class="price-item-content">
+                                <div class="price-retailer">${item.retailer}</div>
+                                <div class="price-product">${item.product}</div>
+                                <div class="price-value">${item.price}</div>
+                            </div>
+                            <div class="price-item-actions">
+                                ${item.source_url ? `
+                                    <a href="${item.source_url}" target="_blank" class="price-link">
+                                        🛒 Visit Store
+                                    </a>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += `</div>`;
+            }
+
+            // Price Trend Analysis
+            if (data.price_trend_analysis) {
+                html += `
+                    <div class="analysis-section">
+                        <h4>📈 Price Trend Analysis</h4>
+                        <div class="analysis-content">
+                            ${data.price_trend_analysis}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Shopping Timing Advice
+            if (data.shopping_timing_advice) {
+                html += `
+                    <div class="analysis-section">
+                        <h4>⏰ Shopping Timing Advice</h4>
+                        <div class="analysis-content">
+                            ${data.shopping_timing_advice}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Comprehensive Summary
+            if (data.comprehensive_summary) {
+                html += `
+                    <div class="analysis-section">
+                        <h4>📋 Comprehensive Summary</h4>
+                        <div class="analysis-content">
+                            ${data.comprehensive_summary}
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += `</div>`;
+            resultsContainer.innerHTML = html;
+        }
+        
         function displayResults(results) {
             if (!results || results.length === 0) {
                 resultsContainer.innerHTML = `
@@ -584,41 +852,80 @@
                 </div>
             `;
         }
-
-        searchForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
+        
+        // Regular search form submission
+        if(searchForm) {
+            searchForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
             
-            const query = queryInput.value.trim();
-            const location = locationInput.value.trim();
-            
-            if (!query) {
-                displayError('Please enter a product name or description');
-                return;
-            }
-
-            showLoading();
-            resultsContainer.innerHTML = '';
-
-            try {
-                const response = await fetch(`/search?q=${encodeURIComponent(query)}&location=${encodeURIComponent(location)}`);
+                const query = queryInput.value.trim();
+                const location = locationInput.value.trim();
                 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                if (!query) {
+                    displayError('Please enter a product name or description');
+                    return;
                 }
                 
-                const results = await response.json();
-                displayResults(results);
+                showLoading(false);
+                resultsContainer.innerHTML = '';
                 
-            } catch (error) {
-                console.error('Search error:', error);
-                displayError('Failed to fetch search results. Please try again.');
-            } finally {
-                hideLoading();
-            }
-        });
+                try {
+                
+                    const response = await fetch(`http://localhost:8002/api/search?q=${encodeURIComponent(query)}&location=${encodeURIComponent(location)}`);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const results = await response.json();
+                    displayResults(results);
+                    
+                } catch (error) {
+                    console.error('Search error:', error);
+                    displayError('Failed to fetch search results. Please try again.');
+                } finally {
+                    hideLoading(false);
+                }
+            });
+        }
+
+        // Gemini search button click
+        if(geminiSearchBtn) {
+            geminiSearchBtn.addEventListener('click', async () => {
+                const query = queryInput.value.trim();
+                const location = locationInput.value.trim();
+                
+                if (!query) {
+                    displayError('Please enter a product name or description');
+                    return;
+                }
+                
+                showLoading(true);
+                resultsContainer.innerHTML = '';
+                
+                try {
+                    const response = await fetch(`/api/search_with_gemini?q=${encodeURIComponent(query)}&location=${encodeURIComponent(location)}`);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const results = await response.json();
+                    displayGeminiResults(results);
+                    
+                } catch (error) {
+                    console.error('Gemini search error:', error);
+                    displayError('Failed to fetch Gemini analysis. Please try again.');
+                } finally {
+                    hideLoading(true);
+                }
+            });
+        }
 
         // Auto-focus on search input
-        queryInput.focus();
+        if(queryInput) {
+            queryInput.focus();
+        }
 
         // Add enter key support for suggestion tags
         document.querySelectorAll('.suggestion-tag').forEach(tag => {
@@ -628,6 +935,7 @@
                 }
             });
         });
+    });
     </script>
 </body>
 </html>
